@@ -1,0 +1,20 @@
+{"accounts": [
+	{"id": "id obtained with getInfosAccounts.py", "steps": {"stepGetFollowers": true, "stepGetFollowersDetails": true, "stepConvertJsonToExcel": true}},
+	{"id": "id obtained with getInfosAccounts.py", "steps": {"stepGetFollowers": true, "stepGetFollowersDetails": true, "stepConvertJsonToExcel": true}}
+],
+"triesStepGetFollowersDetails": 1,
+"delayCallGetFollowers" : 1,
+"delayCallGetFollowersDetails": 1,
+"sleepOnError": 20,
+"sleepAfterNextAccount": 10,
+"sleepAfterStepEnd": 60,
+"WaitEveryXAccount": 200,
+"sleepEveryXAccount": 5,
+"httpRequest": {
+	"verifySSL": true,
+	"cookies": {"sessionid_ss": "from cookies when connected to Tiktok", "tt-target-idc": "eu-ttp2"}
+},
+"browser": "chrome",
+"tz": "Europe/Paris",
+"dateFormats": {"dateString": "%d/%m/%Y %H:%M:%S", "dateDBString": "%Y-%m-%d %H:%M:%S", "dateFileString": "%d%m%Y%H%M%S"}
+}
