@@ -23,7 +23,7 @@ def log(account, message):
         if "uniqueId" not in account:
             account["uniqueId"] = ""
 
-        strBeforeMessage = strBeforeMessage + " Compte id " + account["id"] + " / uniqueId " + account["uniqueId"]
+        strBeforeMessage = strBeforeMessage + " Account id " + account["id"] + " / uniqueId " + account["uniqueId"]
 
     print(strBeforeMessage + " " + message)
 
@@ -55,7 +55,7 @@ def get_user_data_script(account, userinfo):
             log(account, f"[×] Response for https://www.tiktok.com/@{user_id} isn't OK : status={response.status_code} text={response.text}")
             return None
     except Exception as e:
-        log(account, f"[×] Error while requesting Tiktok for id {user_id} : {e}")
+        log(account, f"[×] Error while requesting tiktok for id {user_id} : {e}")
         return None
     
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -108,7 +108,7 @@ def getFollowers(account):
                 user["videoCount"] = follower.get("stats")["videoCount"]
                 user["followerCount"] = follower.get("stats")["followerCount"]
                 user["followingCount"] = follower.get("stats")["followingCount"]
-                user["privateAccount"] = "Oui" if follower.get("user")["privateAccount"] is True else "Non"
+                user["privateAccount"] = "Yes" if follower.get("user")["privateAccount"] is True else "No"
                 user["bio"] = follower.get("user")["signature"]
                 followers.append(user)
                 line_number = line_number + 1
@@ -238,12 +238,13 @@ def getFollowersDetails(account):
             
             for follower in followersjson:
                 # From api/user/list/, there's no createTime, language and region
-                # In this step, if we can't find follower, createtime/language/region set with empty values
+                # In this step, if we can't find follower, createtime/language/region set with empty values => could be changed by not setting empty values in
+                # populateWithAdditionnalInfo in block if user_data_script is None
                 if "createTime" not in follower or follower["createTime"] == "":
                     follower = populateWithAdditionnalInfo(account=account, userinfo=follower, searchUserBy="id")
                     populateWithAdditionnalInfoCalls = populateWithAdditionnalInfoCalls + 1
                                             
-                    # Follower infos couldn't be retrieved
+                    # If we can't retrieve infos from follower homepage
                     if follower["createTime"] == "":
                         log(account, follower["id"] + "/" + follower["uniqueId"] + " unable to get additional data")
                         errors = errors + 1
@@ -263,10 +264,7 @@ def getFollowersDetails(account):
                
                 log(account, str(index) + "/" + str(num_followers_start))
 
-                index = index + 1
-                print(populateWithAdditionnalInfoCalls)
-                print(jsonSettings["WaitEveryXAccount"])
-                
+                index = index + 1                
                 if populateWithAdditionnalInfoCalls > 0 and populateWithAdditionnalInfoCalls == jsonSettings["WaitEveryXAccount"] and num_followers_start > 0:
                     log(account, "Every " + str(jsonSettings["WaitEveryXAccount"]) + " accounts, we wait " + str(jsonSettings["sleepEveryXAccount"]) + " seconds...")
                     time.sleep(jsonSettings["sleepEveryXAccount"])
@@ -315,7 +313,7 @@ def getFollowersDetails(account):
         writer = pd.ExcelWriter(account["recordexcel"], engine='xlsxwriter')
         df = pd.DataFrame({'lineNumber': [follower.get('lineNumber') for follower in followersjson],
                            'uniqueId': [follower.get('uniqueId') for follower in followersjson],
-                           '': [follower.get('id') for follower in followersjson],
+                           'id': [follower.get('id') for follower in followersjson],
                            'createTime': [follower.get('createTime') for follower in followersjson],
                            'nickname': [follower.get('nickname') for follower in followersjson],
                            'language': [follower.get('language') for follower in followersjson],
@@ -393,4 +391,3 @@ if __name__ == "__main__":
 
     log(None, "Program ended")
     fprogram.close()
-
