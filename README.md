@@ -1,5 +1,5 @@
-# tiktok
-Export Tiktok followers list to Excel
+# Tiktok export followers
+Export Tiktok followers list to json file and Excel
 
 getInfosAccounts.py : get id and creation date of Tiktok accounts<br/>
 get-followers-details.py : export followers list of Tiktok accounts
@@ -17,4 +17,5 @@ Step 3 (stepConvertJsonToExcel) : transform json file from step2 to a Excel file
 By setting triesStepGetFollowersDetails, you can do Step 2 several times to try again profiles you couldn't grab.<br />
 If you cancel Step 2 before ending, json file edits done by Step 2 won't be lost. So to continue without starting over, you can disable Step 1 and enable only Step 2 and Step 3.
 
-You'll have better results if you have a Tiktok account : connect to Tiktok and get your "sessionid_ss" cookie, then set it in get-followers-details.settings.json
+As some accounts aren't accessible without being connected to Tiktok, you'll have better results if you have a Tiktok account.
+Cnnect to your Tiktok account and get your "sessionid_ss" cookie, then set it in get-followers-details.settings.json
