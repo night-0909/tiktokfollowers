@@ -25,7 +25,7 @@ See sample files : dataset-tiktok-6863874874285622278_singularynapse.json and da
 
 ![dataset-tiktok-6863874874285622278_singularynapse](https://github.com/user-attachments/assets/be0b8f13-392c-4dd9-a35c-e8123088221e)
 
-As some accounts aren't accessible without being connected to Tiktok, you'll have better results if you have a Tiktok account.
-
+As some accounts aren't accessible without being connected to Tiktok, you'll have better results if you have a Tiktok account.<br />
 Connect to your Tiktok account and get your "sessionid_ss" and "tt-target-idc" cookies, then set them in get-followers-details.settings.json
+
 
