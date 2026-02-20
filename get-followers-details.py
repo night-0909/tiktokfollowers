@@ -55,7 +55,7 @@ def get_user_data_script(account, userinfo):
             log(account, f"[×] Response for https://www.tiktok.com/@{user_id} isn't OK : status={response.status_code} text={response.text}")
             return None
     except Exception as e:
-        log(account, f"[×] Error while requesting tiktok for id {user_id} : {e}")
+        log(account, f"[×] Error while requesting Tiktok for id {user_id} : {e}")
         return None
     
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -94,11 +94,15 @@ def getFollowers(account):
             except Exception as e:
                 log(account, f"[×] Error while requesting tiktok follower list for id {account['secUid']} : {e}")
                 return num_followers
-            
-            num_followers = len(followersjson)
 
-            # We keep only certain fields
+            # We only keep certain fields
             for follower in followersjson:
+                # Sometimes Tiktok insert a dummy follower with empty values such as id: "0" and "uniqueId": ""
+                # but with followerCount and followingCount set, so we d'ont keep it
+                if follower.get("user")["id"] == "0":
+                    log(account, "Dummy follower : " + str(follower))
+                    continue
+
                 user = {}
                 user['lineNumber'] = line_number
                 user["id"] = follower.get("user")["id"]
@@ -113,11 +117,13 @@ def getFollowers(account):
                 followers.append(user)
                 line_number = line_number + 1
 
+            num_followers = len(followers)
+
             # Write followers to json file
             result.seek(0)
             result.write(json.dumps(followers))
             result.flush()
-            log(account, "Followers gathered : " + str(len(followers)) +"/" + str(account["followerCount"]))
+            log(account, "Followers gathered : " + str(num_followers) + "/" + str(account["followerCount"]))
 
             minCursor = resjson["minCursor"]
             if resjson["hasMore"] is False:
@@ -128,7 +134,8 @@ def getFollowers(account):
             index = index + 1
 
         result.close()
-        log(account, "Get followers done : " + str(len(followers)))
+        
+        log(account, "Get followers done : " + str(num_followers))
     else:
         log(account, "We skip stepGetFollowers")
 
@@ -277,14 +284,14 @@ def getFollowersDetails(account):
 
             # OPTIONAL (use only if you uncomment this line above : # del followersjson[index - 1])
             # We recompute line numbers as we could have deleted some followers in this step
-            line_number = 1
-            result = open(account["recordjson"], "w", encoding="utf-8")
-            for follower in followersjson:
-                follower['lineNumber'] = line_number
-                line_number = line_number + 1
+            #line_number = 1
+            #result = open(account["recordjson"], "w", encoding="utf-8")
+            #for follower in followersjson:
+                #follower['lineNumber'] = line_number
+                #line_number = line_number + 1
 
-            result.write(json.dumps(followersjson))
-            result.close()
+            #result.write(json.dumps(followersjson))
+            #result.close()
 
             if errors > 0:            
                 if tryindexStepGetFollowersDetails < jsonSettings["triesStepGetFollowersDetails"]:
