@@ -7,10 +7,23 @@ get-followers-details.py : export followers list of Tiktok accounts
 For a list of Tiktok accounts, get their followers list (maximum : last 10000 followers) with their infos.<br />
 Results are saved in a .json and .xlsx file.
 
-**Input :**<br />
-Setup get-followers-details.settings.json with all accounts you want to export.<br />
-You need their id, get them with getInfosAccounts.py<br />
-For each account, choose which step to do :<br />
+**Use :**<br />
+**1- Get numeric id of Tiktok account by running getInfosAccounts.py**<br />
+First, for each Tiktok account you want their follower list, get their numeric id.<br />
+Edit getInfosAccounts.py and input accounts name list at the end of script.<br />
+Example : accounts = ["singularynapse"]<br />
+Run getInfosAccounts.py and get : singularynapse : 6863874874285622278 created on 2021-07-29 20:03:48<br />
+6863874874285622278 is numeric id of tiktok.com/@singularynapse account
+
+**2- Export followers list of Tiktok accounts id by running get-followers-details.py**<br />
+First, setup get-followers-details.settings.json with all accounts ids you want to export.<br />
+Example : 
+{"accounts": [
+	{"id": "6863874874285622278", "steps": {"stepGetFollowers": true, "stepGetFollowersDetails": true, "stepConvertJsonToExcel": true}}<br />
+],<br />
+...<br />
+
+For each account, choose which steps to do :<br />
 Step 1 (stepGetFollowers) : get followers list and save it to a json file<br />
 Step 2 (stepGetFollowersDetails) : get info of each followers and add them to Step 1 json file<br />
 Step 3 (stepConvertJsonToExcel) : transform json file from step2 to a Excel file.<br /><br />
