@@ -55,8 +55,8 @@ def get_info(username):
 
     return userinfoResult
 
-accounts = [""]
-cookies = {"sessionid_ss": "", "tt-target-idc": "eu-ttp2"}
+accounts = ["singularynapse"]
+cookies = {"sessionid_ss": "", "tt-target-idc": ""}
 browser = 'chrome'
 tzinfo = ZoneInfo("Europe/Paris")
 dateFormat = '%Y-%m-%d %H:%M:%S'

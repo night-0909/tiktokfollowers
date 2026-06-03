@@ -12,7 +12,7 @@
 "sleepEveryXAccount": 5,
 "httpRequest": {
 	"verifySSL": true,
-	"cookies": {"sessionid_ss": "from cookies when connected to Tiktok", "tt-target-idc": "eu-ttp2"}
+	"cookies": {"sessionid_ss": "from cookies when connected to Tiktok", "tt-target-idc": "from cookies when connected to Tiktok"}
 },
 "browser": "chrome",
 "tz": "Europe/Paris",
