@@ -1,5 +1,5 @@
-# Tiktok export followers
-Export Tiktok followers list to json file and Excel
+# Tiktok export followers and following list
+Export Tiktok followers and following list to json file and Excel
 
 getInfosAccounts.py : get id and creation date of Tiktok accounts<br/>
 get-followers-details.py : export followers list of Tiktok accounts
@@ -7,7 +7,7 @@ get-followers-details.py : export followers list of Tiktok accounts
 For a list of Tiktok accounts, get their followers list (maximum : last 10000 followers) with their infos.<br />
 Results are saved in a .json and .xlsx file.
 
-**Use :**<br />
+**Usage :**<br /><br />
 **1- Get numeric id of Tiktok account by running getInfosAccounts.py**<br />
 First, for each Tiktok account you want their follower list, get their numeric id.<br />
 Edit getInfosAccounts.py and input accounts name list at the end of script.<br />
@@ -30,8 +30,8 @@ Step 3 (stepConvertJsonToExcel) : transform json file from step2 to a Excel file
 By setting triesStepGetFollowersDetails, you can do Step 2 several times to try again profiles you couldn't grab.<br />
 If you cancel Step 2 before ending, json file edits done by Step 2 won't be lost. So to continue without starting over, you can disable Step 1 and enable only Step 2 and Step 3.
 
-**Results :**<br />
-Fields : lineNumber	uniqueId	id	createTime	nickname	language	region	diggCount	videoCount	followerCount	followingCount	friendCount	privateAccount	bio	statusCode	statusMsg<br />
+**Results :**<br /><br />
+Fields : lineNumber	uniqueId	id	createTime	nickname	language	region (not available for months)	diggCount	videoCount	followerCount	followingCount	friendCount	privateAccount	bio	statusCode	statusMsg<br />
 statusCode and statusMsg indicate if you could reach follower account.<br />
 
 See sample files : dataset-tiktok-6863874874285622278_singularynapse.json and dataset-tiktok-6863874874285622278_singularynapse.xlsx<br />
@@ -41,4 +41,9 @@ See sample files : dataset-tiktok-6863874874285622278_singularynapse.json and da
 As some accounts aren't accessible without being connected to Tiktok, you'll have better results if you have a Tiktok account.<br />
 Connect to your Tiktok account and get your "sessionid_ss" and "tt-target-idc" cookies, then set them in get-followers-details.settings.json
 
-
+**Following list :**<br /><br />
+To get following list of a Tiktok account, you just need to change one value in get-followers-details.py.<br />
+Change scene=67 by scene=21 at the top of getFollowers function :<br />
+```python
+response = curl_cffi.get( "https://www.tiktok.com/api/user/list/?count=30&maxCursor=0&minCursor=" + str(minCursor) + "&scene=67&secUid=" + account["secUid"], cookies=jsonSettings["httpRequest"]["cookies"], verify=jsonSettings["httpRequest"]["verifySSL"], impersonate=browser)
+```
