@@ -2,7 +2,7 @@
 Export Tiktok followers and following list to json file and Excel
 
 getInfosAccounts.py : get id and creation date of Tiktok accounts<br/>
-get-followers-details.py : export followers list of Tiktok accounts
+get-followers-details.py : export followers and following list of Tiktok accounts
 
 For a list of Tiktok accounts, get their followers list (maximum : last 10000 followers) with their infos.<br />
 Results are saved in a .json and .xlsx file.
