@@ -10,6 +10,13 @@ Results are saved in a .json and .xlsx file.
 # Demo
 https://github.com/night-0909/tiktokfollowers/blob/main/TiktokFollowers.gif
 
+# Installation
+
+Install Python then all required modules.
+```python
+pip3 install curl_cffi beautifulsoup4 pandas
+```
+
 # Usage
 ## 1- Get numeric id of Tiktok account by running getInfosAccounts.py
 First, for each Tiktok account you want their follower list, get their numeric id.<br />
