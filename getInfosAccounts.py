@@ -55,19 +55,22 @@ def get_info(username):
 
     return userinfoResult
 
-accounts = ["singularynapse"]
-cookies = {"sessionid_ss": "", "tt-target-idc": ""}
-browser = 'chrome'
-tzinfo = ZoneInfo("Europe/Paris")
-dateFormat = '%Y-%m-%d %H:%M:%S'
+if __name__ == "__main__":
+    # Settings
+    accounts = ["singularynapse"]
+    cookies = {"sessionid_ss": "", "tt-target-idc": "eu-ttp2"}
+    browser = 'chrome'
+    tzinfo = ZoneInfo("Europe/Paris")
+    dateFormat = '%Y-%m-%d %H:%M:%S'
 
-for account in accounts:
-    user = get_info(account)
-    if user is not None:
-        if user["statusCode"] == 0:
-            print(account + " : " + str(user["id"]) + " created on " + str(user["createTime"]))        
-    else:
-        print(account + " : error.")
-        
-    time.sleep(2)
+    for account in accounts:
+        user = get_info(account)
+        if user is not None:
+            if user["statusCode"] == 0:
+                print(account + " : " + str(user["id"]) + " created on " + str(user["createTime"]))        
+        else:
+            print(account + " : error.")
+            
+        time.sleep(2)
+
 
