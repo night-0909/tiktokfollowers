@@ -7,6 +7,9 @@ get-followers-details.py : export followers and following list of Tiktok account
 For a list of Tiktok accounts, get their followers list (maximum : last 10000 followers) with their infos.<br />
 Results are saved in a .json and .xlsx file.
 
+# Demo
+![TiktokFollowers.gif](https://github.com/night-0909/tiktokfollowers/blob/main/TiktokFollowers.gif)
+
 # Usage
 ## 1- Get numeric id of Tiktok account by running getInfosAccounts.py
 First, for each Tiktok account you want their follower list, get their numeric id.<br />
