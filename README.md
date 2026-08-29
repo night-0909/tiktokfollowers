@@ -51,7 +51,7 @@ Step 3 (stepConvertJsonToExcel) : transform json file from step2 to a Excel file
 By setting triesStepGetFollowsDetails, you can do Step 2 several times to try again profiles you couldn't grab.<br />
 If you cancel Step 2 before end of program execution, json file edits done by Step 2 won't be lost. So to continue without starting over, you can disable Step 1.
 
-Run get-follows-details.py, it will create three files one log, one json and one Excel file.
+Run get-follows-details.py, it will create three files by account : one log, one json and one Excel file.
 
 # Results
 Fields : lineNumber	uniqueId	id	createTime	nickname	language	region (not available for months)	diggCount	videoCount	followerCount	followingCount	friendCount	privateAccount	bio	statusCode	statusMsg<br />
