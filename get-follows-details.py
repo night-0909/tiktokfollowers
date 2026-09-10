@@ -370,6 +370,7 @@ if __name__ == "__main__":
     for index, account in enumerate(jsonSettings["accounts"]):
         account = populateWithAdditionnalInfo(account=account, userinfo=account, searchUserBy="id")
         if (account["createTime"] != ""):
+            account["populated"] = True
             account["recordjson"] = "dataset-tiktok-" + jsonSettings["scrape"] + "-" + account["id"] + "_" + account["uniqueId"] + ".json"
             account["recordexcel"] = "dataset-tiktok-" + jsonSettings["scrape"] + "-" + account["id"] + "_" + account["uniqueId"] + ".xlsx"
             logfile = "dataset-tiktok-" + jsonSettings["scrape"] + "-" + account["id"] + "_" + account["uniqueId"] + ".log"
@@ -382,20 +383,23 @@ if __name__ == "__main__":
             time.sleep(jsonSettings["delayCallGetFollows"])
         else:
             log(account, "Unable to gather account info in the initialization step")
+            account["populated"] = False
 
     # Get followers/following list
     for index, account in enumerate(jsonSettings["accounts"]):
-        num_follows = getFollows(account)
-        if (num_follows) > 0 and index < len(jsonSettings["accounts"]) - 1:
-            log(account, "Before next account, we wait " + str(jsonSettings["sleepAfterNextAccount"]) + " seconds...")
-            time.sleep(jsonSettings["sleepAfterNextAccount"])
+        if account["populated"] is True:
+            num_follows = getFollows(account)
+            if (num_follows) > 0 and index < len(jsonSettings["accounts"]) - 1:
+                log(account, "Before next account, we wait " + str(jsonSettings["sleepAfterNextAccount"]) + " seconds...")
+                time.sleep(jsonSettings["sleepAfterNextAccount"])
 
     # Get additionnal infos for followers/following
     threads = []
     for account in jsonSettings["accounts"]:
-        threadGetFollowsDetails = threading.Thread(target=getFollowsDetails, args=(account,))
-        threads.append(threadGetFollowsDetails)
-        threadGetFollowsDetails.start()
+        if account["populated"] is True:
+            threadGetFollowsDetails = threading.Thread(target=getFollowsDetails, args=(account,))
+            threads.append(threadGetFollowsDetails)
+            threadGetFollowsDetails.start()
 
     for thread in threads:
         thread.join()
