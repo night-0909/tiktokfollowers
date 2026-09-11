@@ -370,7 +370,7 @@ if __name__ == "__main__":
     for index, account in enumerate(jsonSettings["accounts"]):
         account = populateWithAdditionnalInfo(account=account, userinfo=account, searchUserBy="id")
         if (account["createTime"] != ""):
-            account["populated"] = True
+            account["accessible"] = True
             account["recordjson"] = "dataset-tiktok-" + jsonSettings["scrape"] + "-" + account["id"] + "_" + account["uniqueId"] + ".json"
             account["recordexcel"] = "dataset-tiktok-" + jsonSettings["scrape"] + "-" + account["id"] + "_" + account["uniqueId"] + ".xlsx"
             logfile = "dataset-tiktok-" + jsonSettings["scrape"] + "-" + account["id"] + "_" + account["uniqueId"] + ".log"
@@ -383,11 +383,11 @@ if __name__ == "__main__":
             time.sleep(jsonSettings["delayCallGetFollows"])
         else:
             log(account, "Unable to gather account info in the initialization step")
-            account["populated"] = False
+            account["accessible"] = False
 
     # Get followers/following list
     for index, account in enumerate(jsonSettings["accounts"]):
-        if account["populated"] is True:
+        if account["accessible"] is True:
             num_follows = getFollows(account)
             if (num_follows) > 0 and index < len(jsonSettings["accounts"]) - 1:
                 log(account, "Before next account, we wait " + str(jsonSettings["sleepAfterNextAccount"]) + " seconds...")
@@ -396,7 +396,7 @@ if __name__ == "__main__":
     # Get additionnal infos for followers/following
     threads = []
     for account in jsonSettings["accounts"]:
-        if account["populated"] is True:
+        if account["accessible"] is True:
             threadGetFollowsDetails = threading.Thread(target=getFollowsDetails, args=(account,))
             threads.append(threadGetFollowsDetails)
             threadGetFollowsDetails.start()
