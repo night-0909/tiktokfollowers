@@ -101,7 +101,7 @@ def getFollows(account):
             # We only keep certain fields
             for follow in followsjson:
                 # Sometimes Tiktok insert a dummy follow with empty values such as id: "0" and "uniqueId": ""
-                # but with followerCount and followingCount set, so we d'ont keep it
+                # but with followerCount and followingCount set, so we don't keep it
                 if follow.get("user")["id"] == "0":
                     log(account, "Dummy follow : " + str(follow))
                     continue
@@ -147,18 +147,15 @@ def getFollows(account):
 def populateWithAdditionnalInfo(*, account, userinfo, searchUserBy="id"):
     user_data_script = get_user_data_script(account, userinfo)
     userSearchField = userinfo[searchUserBy]
+    original_userinfo = userinfo.copy()
 
     if user_data_script is None:
-        userinfo["createTime"] = ""
-        userinfo["language"] = ""
-        userinfo["region"] = "" # region doesn't seem to be returned by Tiktok anymore
-        # Define a nonexistent Tiktok statusCode and statusMsg for this case
-        userinfo["statusCode"] = 99999
-        userinfo["statusMsg"] = "Error getting Tiktok page"
-        return userinfo
+        log(account, f"[×] Profile {original_userinfo['id']} : error getting script tag from Tiktok page")        
+        return original_userinfo
+    
     try:
         user_data_json = json.loads(user_data_script.text)
-
+        
         # First, check if profile is accessible looking at statusCode (0 = OK)
         # List of statusCode and statusMessage and their meaning : see https://github.com/davidteather/TikTok-Api/issues/403#issuecomment-971818109
         webappuserdetail = user_data_json.get('__DEFAULT_SCOPE__', {}).get('webapp.user-detail', {})
@@ -168,10 +165,7 @@ def populateWithAdditionnalInfo(*, account, userinfo, searchUserBy="id"):
         # Error while getting profile, possible causes : TK profile don't exist anymore or it isn't accessible (need to login, private,
         # audience control is activated by owner, sensitive content, or other reasons see statusMsg)
         if userinfo["statusCode"] != 0:
-            userinfo["createTime"] = ""
-            userinfo["language"] = ""
-            userinfo["region"] = ""
-            log(account, f"[×] Profile isn't accessible statusCode={userinfo['statusCode']} statusMsg={userinfo['statusMsg']}")
+            log(account, f"[×] Profile {userinfo['id']} isn't accessible statusCode={userinfo['statusCode']} statusMsg={userinfo['statusMsg']}")
             return userinfo
         
         # Profile is accessible        
@@ -194,13 +188,12 @@ def populateWithAdditionnalInfo(*, account, userinfo, searchUserBy="id"):
 
         stats = user_info.get('stats', {})
         userinfo["friendCount"] = stats["friendCount"]
-        
-    except json.JSONDecodeError as e:
-        log(account, f"[×] JSON decoding error for {searchUserBy} {userSearchField} : {e}")
-        return None
+
+        #if userinfo["id"] != "7247542174765876250":
+            #pouet()
     except Exception as e:
-        log(account, f"[×] Error while processing data for {searchUserBy} {userSearchField} : {e}")
-        return None
+        log(account, f"[×] Profile {original_userinfo['id']} : error while processing data : {e}")
+        return original_userinfo
 
     return userinfo
 
@@ -251,12 +244,12 @@ def getFollowsDetails(account):
                 # From api/user/list/, there's no createTime, language and region
                 # In this step, if we can't find follower/following, createtime/language/region set with empty values => could be changed by not setting empty values in
                 # populateWithAdditionnalInfo in block if user_data_script is None
-                if "createTime" not in follow or follow["createTime"] == "":
+                if "createTime" not in follow:
                     follow = populateWithAdditionnalInfo(account=account, userinfo=follow, searchUserBy="id")
                     populateWithAdditionnalInfoCalls = populateWithAdditionnalInfoCalls + 1
-                                            
+      
                     # If we can't retrieve infos from follow homepage
-                    if follow["createTime"] == "":
+                    if "createTime" not in follow:
                         log(account, follow["id"] + "/" + follow["uniqueId"] + " unable to get additional data")
                         errors = errors + 1
                         if tryindexStepGetFollowsDetails == jsonSettings["triesStepGetFollowsDetails"]:
@@ -266,12 +259,15 @@ def getFollowsDetails(account):
 
                         log(account, "Errors : " + str(errors))
                     else:
+                        log(account, follow["id"] + "/" + follow["uniqueId"] + " OK")
                         # We write the hole list after each follow is updated, in case of termination to not lose every account done
                         result.seek(0)
                         result.write(json.dumps(followsjson))
                         result.flush()
 
                     time.sleep(jsonSettings["delayCallGetFollowsDetails"])
+                else:
+                    log(account, follow["id"] + "/" + follow["uniqueId"] + " has already additional data")
                
                 log(account, str(index) + "/" + str(num_follows_start))
 
@@ -369,7 +365,7 @@ if __name__ == "__main__":
     # Populate filenames and set log file handle in jsonSettings["accounts"] array
     for index, account in enumerate(jsonSettings["accounts"]):
         account = populateWithAdditionnalInfo(account=account, userinfo=account, searchUserBy="id")
-        if (account["createTime"] != ""):
+        if "createTime" in account:
             account["accessible"] = True
             account["recordjson"] = "dataset-tiktok-" + jsonSettings["scrape"] + "-" + account["id"] + "_" + account["uniqueId"] + ".json"
             account["recordexcel"] = "dataset-tiktok-" + jsonSettings["scrape"] + "-" + account["id"] + "_" + account["uniqueId"] + ".xlsx"
