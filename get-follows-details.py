@@ -80,9 +80,8 @@ def getFollows(account):
         while hasMore is True:
             try:
                 scene = 67 if jsonSettings["scrape"] == 'followers' else 21
-                response = curl_cffi.get(
-                "https://www.tiktok.com/api/user/list/?count=30&maxCursor=0&minCursor=" + str(minCursor) +
-                "&scene=" + str(scene) + "&secUid=" + account["secUid"], cookies=jsonSettings["httpRequest"]["cookies"],
+                url = f"https://www.tiktok.com/api/user/list/?count=30&maxCursor=0&minCursor={minCursor}&scene={scene}&secUid={account['secUid']}"
+                response = curl_cffi.get(url, cookies=jsonSettings["httpRequest"]["cookies"],
                     verify=jsonSettings["httpRequest"]["verifySSL"], impersonate=browser)
                 resjson = response.json()
                 if response.status_code == 200:
@@ -95,7 +94,11 @@ def getFollows(account):
                     log(account, f"[×] Response for https://www.tiktok.com/api/user/list/ isn't OK : status={response.status_code} text={response.text}")
                     return num_follows
             except Exception as e:
-                log(account, f"[×] Error while requesting tiktok " + jsonSettings["scrape"] + " list for id {account['secUid']} : {e}")
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                print(exc_type, fname, exc_tb.tb_lineno)
+                
+                log(account, f"[×] Error while requesting tiktok {jsonSettings['scrape']} list for id {account['secUid']} : {e}")
                 return num_follows
 
             # We only keep certain fields
@@ -253,8 +256,6 @@ def getFollowsDetails(account):
                         log(account, follow["id"] + "/" + follow["uniqueId"] + " unable to get additional data")
                         errors = errors + 1
                         if tryindexStepGetFollowsDetails == jsonSettings["triesStepGetFollowsDetails"]:
-                            # We delete follow only if we are the last triesStepGetFollowsDetails
-                            # del followsjson[index - 1]
                             log(account, follow["id"] + "/" + follow["uniqueId"] + " was never retrieved")
 
                         log(account, "Errors : " + str(errors))
@@ -281,17 +282,6 @@ def getFollowsDetails(account):
             result.close()
             resultsStep.append({"try": tryindexStepGetFollowsDetails, "errors": errors, "num_follows_start": num_follows_start, "num_follows_end": num_follows_end})
             displayResultsStep(account, resultsStep)
-
-            # OPTIONAL (use only if you uncomment this line above : # del followsjson[index - 1])
-            # We recompute line numbers as we could have deleted some follows in this step
-            #line_number = 1
-            #result = open(account["recordjson"], "w", encoding="utf-8")
-            #for follow in followsjson:
-                #follow['lineNumber'] = line_number
-                #line_number = line_number + 1
-
-            #result.write(json.dumps(followsjson))
-            #result.close()
 
             if errors > 0:            
                 if tryindexStepGetFollowsDetails < jsonSettings["triesStepGetFollowsDetails"]:
